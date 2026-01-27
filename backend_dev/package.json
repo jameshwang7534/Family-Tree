@@ -1,0 +1,30 @@
+{
+  "name": "family-tree-backend",
+  "version": "1.0.0",
+  "description": "Family Tree Backend API",
+  "main": "dist/index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "node --loader ts-node/esm src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "dotenv": "^16.6.1",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.2"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/dotenv": "^6.1.1",
+    "@types/express": "^4.17.21",
+    "@types/jsonwebtoken": "^9.0.7",
+    "@types/node": "^20.10.6",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
+  }
+}
