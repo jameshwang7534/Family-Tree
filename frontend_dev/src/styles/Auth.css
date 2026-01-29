@@ -8,17 +8,18 @@
 
 .auth-card {
   background: white;
-  padding: 2rem;
+  padding: 4rem;
   border-radius: 10px;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
   width: 100%;
   max-width: 400px;
+  height: 600px;
 }
 
 .auth-card h1 {
   text-align: center;
   color: #333;
-  margin-bottom: 1.5rem;
+  margin-bottom: 2.5rem;
   font-size: 1.8rem;
 }
 
@@ -50,7 +51,7 @@
 
 .auth-card button {
   width: 100%;
-  padding: 0.75rem;
+  padding: 1rem;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   border: none;
@@ -59,6 +60,12 @@
   font-weight: 600;
   cursor: pointer;
   transition: transform 0.2s, box-shadow 0.2s;
+  margin-top: 1.5rem;
+}
+
+.form-group input,
+.auth-card button {
+  box-sizing: border-box;
 }
 
 .auth-card button:hover:not(:disabled) {
@@ -83,7 +90,7 @@
 
 .auth-link {
   text-align: center;
-  margin-top: 1.5rem;
+  margin-top: 2.5rem;
   color: #666;
 }
 

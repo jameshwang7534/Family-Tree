@@ -29,7 +29,7 @@ export const LoginPage: React.FC = () => {
   return (
     <div className="auth-container">
       <div className="auth-card">
-        <h1>Login</h1>
+        <h1>Log in into Your Account</h1>
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label htmlFor="email">Email:</label>
@@ -51,10 +51,11 @@ export const LoginPage: React.FC = () => {
               required
             />
           </div>
+
           {error && <div className="error-message">{error}</div>}
           <button type="submit" disabled={loading}>
             {loading ? 'Logging in...' : 'Login'}
-          </button>
+          </button>          
         </form>
         <p className="auth-link">
           Don't have an account? <a href="/register">Register here</a>
