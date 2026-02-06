@@ -12,6 +12,8 @@
 }
 
 .modal-content {
+  position: relative;
+  z-index: 2001;
   background: white;
   border-radius: 8px;
   padding: 24px;
@@ -51,6 +53,86 @@
   border-color: #667eea;
 }
 
+.form-birthdate-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.form-birthdate-field {
+  flex: 1;
+  min-width: 0;
+}
+
+.form-birthdate-sublabel {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 0.85rem;
+  color: #666;
+  font-weight: 400;
+}
+
+.form-birthdate-field input {
+  width: 100%;
+}
+
+/* Hide number input spinners (up/down arrows) for birth date fields */
+.form-birthdate-input::-webkit-inner-spin-button,
+.form-birthdate-input::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.form-birthdate-input {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+.form-age-hint {
+  margin: 6px 0 0 0;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.form-age-hint.form-age-invalid {
+  color: #c62828;
+}
+
+.form-file {
+  padding: 6px 0;
+  font-size: 0.9rem;
+}
+
+.form-photo-preview {
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.form-photo-preview img {
+  width: 64px;
+  height: 64px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+}
+
+.form-photo-remove {
+  padding: 6px 12px;
+  font-size: 0.9rem;
+  background: #f5f5f5;
+  color: #666;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.form-photo-remove:hover {
+  background: #eee;
+  color: #333;
+}
+
 .modal-actions {
   display: flex;
   gap: 12px;
@@ -83,4 +165,28 @@
 
 .modal-actions button[type="submit"]:hover {
   background: #5568d3;
+}
+
+.modal-delete-section {
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.modal-delete-btn {
+  width: 100%;
+  padding: 8px 16px;
+  background: #fff;
+  color: #c62828;
+  border: 1px solid #c62828;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: background 0.2s, color 0.2s;
+}
+
+.modal-delete-btn:hover {
+  background: #ffebee;
+  color: #b71c1c;
+  border-color: #b71c1c;
 }

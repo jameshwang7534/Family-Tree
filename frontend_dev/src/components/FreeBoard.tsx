@@ -1,22 +1,65 @@
 import { useState, useRef, useEffect } from 'react'
 import ProfileCard from './ProfileCard'
+import EditProfileModal from './EditProfileModal'
 import type { Profile } from '../types'
 import '../styles/FreeBoard.css'
 
+const PROFILES_STORAGE_KEY = 'family-tree-profiles'
+const NEXT_ID_STORAGE_KEY = 'family-tree-next-id'
+
+function loadProfiles(): Profile[] {
+  try {
+    const raw = localStorage.getItem(PROFILES_STORAGE_KEY)
+    if (raw) {
+      const parsed = JSON.parse(raw) as Profile[]
+      return Array.isArray(parsed) ? parsed : []
+    }
+  } catch {
+    // ignore
+  }
+  return []
+}
+
+function loadNextId(): number {
+  try {
+    const raw = localStorage.getItem(NEXT_ID_STORAGE_KEY)
+    if (raw) {
+      const n = parseInt(raw, 10)
+      if (Number.isFinite(n)) return n
+    }
+  } catch {
+    // ignore
+  }
+  return 1
+}
+
 function FreeBoard() {
-  const [profiles, setProfiles] = useState<Profile[]>([])
-  const [nextId, setNextId] = useState(1)
+  const [profiles, setProfiles] = useState<Profile[]>(loadProfiles)
+  const [nextId, setNextId] = useState(loadNextId)
+  const [editingProfileId, setEditingProfileId] = useState<string | null>(null)
   const [isPanning, setIsPanning] = useState(false)
   const [panOffset, setPanOffset] = useState({ x: 0, y: 0 })
   const [panStart, setPanStart] = useState({ x: 0, y: 0 })
   const canvasRef = useRef<HTMLDivElement>(null)
   const isCardDraggingRef = useRef(false)
 
+  useEffect(() => {
+    localStorage.setItem(PROFILES_STORAGE_KEY, JSON.stringify(profiles))
+  }, [profiles])
+
+  useEffect(() => {
+    localStorage.setItem(NEXT_ID_STORAGE_KEY, String(nextId))
+  }, [nextId])
+
   const handleAddProfile = () => {
     const newProfile: Profile = {
       id: `profile-${nextId}`,
-      name: 'New Profile',
+      name: '',
       relationship: '',
+      age: 0,
+      gender: '',
+      birthDate: '',
+      story: '',
       x: Math.random() * 400 + 100,
       y: Math.random() * 300 + 100,
     }
@@ -25,9 +68,19 @@ function FreeBoard() {
   }
 
   const handleUpdateProfile = (id: string, updates: Partial<Profile>) => {
-    setProfiles(profiles.map(profile => 
+    setProfiles(profiles.map(profile =>
       profile.id === id ? { ...profile, ...updates } : profile
     ))
+  }
+
+  const editingProfile = editingProfileId
+    ? (profiles.find(p => p.id === editingProfileId) ?? null)
+    : null
+  const handleSaveEdit = (updates: Partial<Profile>) => {
+    if (editingProfileId) {
+      handleUpdateProfile(editingProfileId, updates)
+      setEditingProfileId(null)
+    }
   }
 
   const handleDeleteProfile = (id: string) => {
@@ -91,7 +144,7 @@ function FreeBoard() {
 
   return (
     <div className="free-board">
-      <div 
+      <div
         ref={canvasRef}
         className={`board-canvas ${isPanning ? 'panning' : ''}`}
         onPointerDown={handlePointerDown}
@@ -105,6 +158,7 @@ function FreeBoard() {
             profile={profile}
             onUpdate={handleUpdateProfile}
             onDelete={handleDeleteProfile}
+            onEditClick={() => setEditingProfileId(profile.id)}
             onDragStart={handleCardDragStart}
             onDragEnd={handleCardDragEnd}
           />
@@ -113,6 +167,17 @@ function FreeBoard() {
       <button className="add-button" onClick={handleAddProfile} title="Add Profile">
         +
       </button>
+      {editingProfile && (
+        <EditProfileModal
+          profile={editingProfile}
+          onSave={handleSaveEdit}
+          onClose={() => setEditingProfileId(null)}
+          onDelete={(id) => {
+            handleDeleteProfile(id)
+            setEditingProfileId(null)
+          }}
+        />
+      )}
     </div>
   )
 }

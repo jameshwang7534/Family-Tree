@@ -28,17 +28,63 @@
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   border-radius: 8px 8px 0 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.profile-card-avatar {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.profile-card-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.profile-card-avatar-default {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.profile-card-avatar-default svg {
+  width: 24px;
+  height: 24px;
 }
 
 .profile-card-header h3 {
   margin: 0;
   font-size: 1.1rem;
   font-weight: 600;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .profile-card-body {
   padding: 12px;
   flex: 1;
+}
+
+.profile-card-body .profile-meta {
+  margin: 0 0 4px 0;
+  color: #444;
+  font-size: 0.85rem;
 }
 
 .profile-card-body .relationship {
