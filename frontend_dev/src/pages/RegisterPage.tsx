@@ -20,7 +20,7 @@ export const RegisterPage: React.FC = () => {
 
     try {
       await register(email, password, firstName, lastName);
-      navigate('/');
+      navigate('/select-tree');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Registration failed');
     } finally {

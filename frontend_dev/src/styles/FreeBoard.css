@@ -26,6 +26,10 @@
   box-sizing: border-box;
 }
 
+.free-board-with-tabs .board-canvas {
+  bottom: 52px;
+}
+
 .board-canvas.panning {
   cursor: grabbing;
 }

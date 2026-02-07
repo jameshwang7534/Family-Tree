@@ -5,6 +5,7 @@ import os
 from dotenv import load_dotenv
 
 from routes.auth import router as auth_router
+from routes.trees import router as trees_router
 
 # Load environment variables
 load_dotenv()
@@ -36,6 +37,7 @@ app.add_middleware(
 
 # Include routers
 app.include_router(auth_router, prefix="/api/auth")
+app.include_router(trees_router, prefix="/api/trees")
 
 @app.get("/health")
 def health_check():

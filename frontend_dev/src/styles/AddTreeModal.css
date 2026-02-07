@@ -1,0 +1,139 @@
+.add-tree-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+
+.add-tree-modal {
+  position: relative;
+  z-index: 2001;
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  width: 90%;
+  max-width: 420px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.add-tree-modal h2 {
+  margin: 0 0 20px 0;
+  color: #333;
+  font-size: 1.5rem;
+}
+
+.add-tree-modal .form-group {
+  margin-bottom: 16px;
+}
+
+.add-tree-modal .form-group label {
+  display: block;
+  margin-bottom: 6px;
+  color: #333;
+  font-weight: 500;
+}
+
+.add-tree-modal input[type="text"],
+.add-tree-modal textarea {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 1rem;
+  box-sizing: border-box;
+}
+
+.add-tree-modal textarea {
+  resize: vertical;
+  min-height: 60px;
+}
+
+.add-tree-modal .form-file {
+  padding: 6px 0;
+  font-size: 0.9rem;
+}
+
+.add-tree-preview {
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.add-tree-preview img {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+}
+
+.add-tree-remove-pic {
+  padding: 6px 12px;
+  font-size: 0.9rem;
+  background: #f5f5f5;
+  color: #666;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.add-tree-remove-pic:hover {
+  background: #eee;
+  color: #333;
+}
+
+.add-tree-hint {
+  margin: 6px 0 0 0;
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.add-tree-error {
+  margin: 0 0 12px 0;
+  color: #c62828;
+  font-size: 0.9rem;
+}
+
+.add-tree-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+
+.add-tree-actions button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.add-tree-actions button[type="button"] {
+  background: #e0e0e0;
+  color: #333;
+}
+
+.add-tree-actions button[type="button"]:hover {
+  background: #d0d0d0;
+}
+
+.add-tree-actions button[type="submit"] {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.add-tree-actions button[type="submit"]:hover:not(:disabled) {
+  opacity: 0.95;
+}
+
+.add-tree-actions button[type="submit"]:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}

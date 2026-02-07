@@ -12,3 +12,13 @@ export interface Profile {
   x: number
   y: number
 }
+
+export interface Tree {
+  id: string
+  userId: string
+  name: string
+  description: string | null
+  iconUrl: string
+  createdAt: string
+  updatedAt: string
+}

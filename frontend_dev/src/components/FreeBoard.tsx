@@ -1,15 +1,27 @@
 import { useState, useRef, useEffect } from 'react'
 import ProfileCard from './ProfileCard'
 import EditProfileModal from './EditProfileModal'
+import { TreeTabsBar, TREE_TABS_BAR_HEIGHT } from './TreeTabsBar'
+import { AddTreeModal } from './AddTreeModal'
+import { useTree } from '../context/TreeContext'
+import { treeService } from '../services/treeService'
 import type { Profile } from '../types'
 import '../styles/FreeBoard.css'
 
-const PROFILES_STORAGE_KEY = 'family-tree-profiles'
-const NEXT_ID_STORAGE_KEY = 'family-tree-next-id'
+const PROFILES_STORAGE_PREFIX = 'family-tree-profiles-'
+const NEXT_ID_STORAGE_PREFIX = 'family-tree-next-id-'
 
-function loadProfiles(): Profile[] {
+function getProfilesKey(treeId: string) {
+  return `${PROFILES_STORAGE_PREFIX}${treeId}`
+}
+
+function getNextIdKey(treeId: string) {
+  return `${NEXT_ID_STORAGE_PREFIX}${treeId}`
+}
+
+function loadProfilesForTree(treeId: string): Profile[] {
   try {
-    const raw = localStorage.getItem(PROFILES_STORAGE_KEY)
+    const raw = localStorage.getItem(getProfilesKey(treeId))
     if (raw) {
       const parsed = JSON.parse(raw) as Profile[]
       return Array.isArray(parsed) ? parsed : []
@@ -20,9 +32,9 @@ function loadProfiles(): Profile[] {
   return []
 }
 
-function loadNextId(): number {
+function loadNextIdForTree(treeId: string): number {
   try {
-    const raw = localStorage.getItem(NEXT_ID_STORAGE_KEY)
+    const raw = localStorage.getItem(getNextIdKey(treeId))
     if (raw) {
       const n = parseInt(raw, 10)
       if (Number.isFinite(n)) return n
@@ -34,22 +46,42 @@ function loadNextId(): number {
 }
 
 function FreeBoard() {
-  const [profiles, setProfiles] = useState<Profile[]>(loadProfiles)
-  const [nextId, setNextId] = useState(loadNextId)
+  const { selectedTreeId, trees, setSelectedTreeId, refreshTrees } = useTree()
+  const [showAddTreeModal, setShowAddTreeModal] = useState(false)
+  const [profiles, setProfiles] = useState<Profile[]>([])
+  const [nextId, setNextId] = useState(1)
   const [editingProfileId, setEditingProfileId] = useState<string | null>(null)
   const [isPanning, setIsPanning] = useState(false)
   const [panOffset, setPanOffset] = useState({ x: 0, y: 0 })
   const [panStart, setPanStart] = useState({ x: 0, y: 0 })
   const canvasRef = useRef<HTMLDivElement>(null)
   const isCardDraggingRef = useRef(false)
+  const skipNextPersistRef = useRef(false)
 
+  // Load this tree's board when selected tree changes
   useEffect(() => {
-    localStorage.setItem(PROFILES_STORAGE_KEY, JSON.stringify(profiles))
-  }, [profiles])
+    if (!selectedTreeId) return
+    setProfiles(loadProfilesForTree(selectedTreeId))
+    setNextId(loadNextIdForTree(selectedTreeId))
+    setEditingProfileId(null)
+    skipNextPersistRef.current = true
+    const t = setTimeout(() => {
+      skipNextPersistRef.current = false
+    }, 0)
+    return () => clearTimeout(t)
+  }, [selectedTreeId])
 
+  // Persist this tree's profiles (skip first run after load so we don't overwrite with empty state)
   useEffect(() => {
-    localStorage.setItem(NEXT_ID_STORAGE_KEY, String(nextId))
-  }, [nextId])
+    if (!selectedTreeId || skipNextPersistRef.current) return
+    localStorage.setItem(getProfilesKey(selectedTreeId), JSON.stringify(profiles))
+  }, [selectedTreeId, profiles])
+
+  // Persist this tree's next id (skip first run after load)
+  useEffect(() => {
+    if (!selectedTreeId || skipNextPersistRef.current) return
+    localStorage.setItem(getNextIdKey(selectedTreeId), String(nextId))
+  }, [selectedTreeId, nextId])
 
   const handleAddProfile = () => {
     const newProfile: Profile = {
@@ -96,9 +128,12 @@ function FreeBoard() {
   }
 
   const handlePointerDown = (e: React.PointerEvent) => {
-    // Don't pan if clicking on a card or button
     const target = e.target as HTMLElement
-    if (target.closest('.profile-card') || target.closest('.add-button')) {
+    if (
+      target.closest('.profile-card') ||
+      target.closest('.add-button') ||
+      target.closest('.tree-tabs-bar')
+    ) {
       return
     }
 
@@ -142,15 +177,28 @@ function FreeBoard() {
     }
   }, [isPanning, panStart])
 
+  const handleAddTreeSubmit = async (payload: {
+    name: string
+    description: string
+    icon_url: string
+  }) => {
+    const created = await treeService.createTree({
+      name: payload.name,
+      description: payload.description || undefined,
+      icon_url: payload.icon_url || undefined,
+    })
+    await refreshTrees()
+    setSelectedTreeId(created.id)
+    setShowAddTreeModal(false)
+  }
+
   return (
-    <div className="free-board">
+    <div className="free-board free-board-with-tabs">
       <div
         ref={canvasRef}
         className={`board-canvas ${isPanning ? 'panning' : ''}`}
         onPointerDown={handlePointerDown}
-        style={{
-          transform: `translate(${panOffset.x}px, ${panOffset.y}px)`,
-        }}
+        style={{ transform: `translate(${panOffset.x}px, ${panOffset.y}px)` }}
       >
         {profiles.map(profile => (
           <ProfileCard
@@ -164,9 +212,26 @@ function FreeBoard() {
           />
         ))}
       </div>
-      <button className="add-button" onClick={handleAddProfile} title="Add Profile">
+      <button
+        className="add-button"
+        onClick={handleAddProfile}
+        title="Add Profile"
+        style={{ bottom: 24 + TREE_TABS_BAR_HEIGHT }}
+      >
         +
       </button>
+      <TreeTabsBar
+        trees={trees}
+        selectedTreeId={selectedTreeId}
+        onSelectTree={setSelectedTreeId}
+        onAddTree={() => setShowAddTreeModal(true)}
+      />
+      {showAddTreeModal && (
+        <AddTreeModal
+          onClose={() => setShowAddTreeModal(false)}
+          onSubmit={handleAddTreeSubmit}
+        />
+      )}
       {editingProfile && (
         <EditProfileModal
           profile={editingProfile}
