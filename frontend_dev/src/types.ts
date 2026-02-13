@@ -22,3 +22,10 @@ export interface Tree {
   createdAt: string
   updatedAt: string
 }
+
+export interface Connection {
+  id: string
+  fromCardId: string
+  toCardId: string
+  relationshipText: string
+}

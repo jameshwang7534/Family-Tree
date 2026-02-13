@@ -1,0 +1,99 @@
+.relationship-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+
+.relationship-modal-content {
+  background: white;
+  border-radius: 8px;
+  padding: 24px;
+  min-width: 300px;
+  max-width: 500px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.relationship-modal-content h3 {
+  margin: 0 0 16px 0;
+  font-size: 1.25rem;
+  color: #333;
+}
+
+.relationship-modal-content .form-group {
+  margin-bottom: 20px;
+}
+
+.relationship-modal-content .form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #555;
+}
+
+.relationship-modal-content .form-group input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+  box-sizing: border-box;
+}
+
+.relationship-modal-content .form-group input:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.2);
+}
+
+.relationship-modal-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.relationship-modal-actions .relationship-delete-btn {
+  margin-right: auto;
+  background: #ff4444;
+  color: white;
+}
+
+.relationship-modal-actions .relationship-delete-btn:hover {
+  background: #cc0000;
+}
+
+.relationship-modal-actions button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.relationship-modal-actions button[type="button"] {
+  background: #f0f0f0;
+  color: #333;
+}
+
+.relationship-modal-actions button[type="button"]:hover {
+  background: #e0e0e0;
+}
+
+.relationship-modal-actions button[type="submit"] {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.relationship-modal-actions button[type="submit"]:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.relationship-modal-actions button[type="submit"]:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

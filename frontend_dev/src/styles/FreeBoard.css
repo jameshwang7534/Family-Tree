@@ -14,7 +14,7 @@
   inset: 0;
   width: 100%;
   height: 100%;
-  overflow: hidden;
+  overflow: visible;
   background-color: #f5f5f5;
   background-image:
     linear-gradient(rgba(0, 0, 0, 0.05) 1px, transparent 1px),
@@ -63,4 +63,50 @@
 
 .add-button:active {
   transform: scale(0.95);
+}
+
+.connections-overlay {
+  pointer-events: none;
+  overflow: visible;
+}
+
+.connections-overlay path {
+  pointer-events: stroke;
+}
+
+.connections-overlay foreignObject {
+  pointer-events: all;
+  overflow: visible;
+}
+
+.connection-mode-hint {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(102, 126, 234, 0.9);
+  color: white;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  z-index: 200;
+  pointer-events: none;
+  animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+.board-canvas.connection-mode {
+  cursor: crosshair;
 }

@@ -96,6 +96,9 @@
 .profile-card-actions {
   padding: 8px 12px;
   border-top: 1px solid #e0e0e0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
 .profile-card-actions button {
@@ -112,4 +115,38 @@
 
 .profile-card-actions button:hover {
   background: #5568d3;
+}
+
+.profile-card-actions .connect-button {
+  background: #764ba2;
+}
+
+.profile-card-actions .connect-button:hover {
+  background: #653a8a;
+}
+
+.profile-card.connection-source {
+  box-shadow: 0 4px 16px rgba(102, 126, 234, 0.6);
+  border: 2px solid #667eea;
+  animation: pulse-border 1.5s ease-in-out infinite;
+}
+
+.profile-card.connection-target-candidate {
+  cursor: pointer;
+  box-shadow: 0 2px 12px rgba(118, 75, 162, 0.4);
+}
+
+.profile-card.connection-target-candidate:hover {
+  box-shadow: 0 4px 16px rgba(118, 75, 162, 0.6);
+  transform: scale(1.02);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+@keyframes pulse-border {
+  0%, 100% {
+    border-color: #667eea;
+  }
+  50% {
+    border-color: #764ba2;
+  }
 }

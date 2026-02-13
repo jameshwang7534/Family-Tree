@@ -55,7 +55,6 @@ interface EditProfileModalProps {
 
 function EditProfileModal({ profile, onSave, onClose, onDelete }: EditProfileModalProps) {
   const [name, setName] = useState(profile.name)
-  const [relationship, setRelationship] = useState(profile.relationship)
   const [month, setMonth] = useState<number | ''>(() => parseBirthDateToParts(profile.birthDate).month)
   const [day, setDay] = useState<number | ''>(() => parseBirthDateToParts(profile.birthDate).day)
   const [year, setYear] = useState<number | ''>(() => parseBirthDateToParts(profile.birthDate).year)
@@ -134,7 +133,6 @@ function EditProfileModal({ profile, onSave, onClose, onDelete }: EditProfileMod
     e.preventDefault()
     onSave({
       name,
-      relationship,
       age: calculatedAge,
       birthDate: birthDateStr,
       photo: photo || undefined,
@@ -166,16 +164,6 @@ function EditProfileModal({ profile, onSave, onClose, onDelete }: EditProfileMod
               onChange={(e) => setName(e.target.value)}
               placeholder="Enter name"
               autoFocus
-            />
-          </div>
-          <div className="form-group">
-            <label htmlFor="relationship">Relationship:</label>
-            <input
-              id="relationship"
-              type="text"
-              value={relationship}
-              onChange={(e) => setRelationship(e.target.value)}
-              placeholder="e.g., Father, Mother, Sibling"
             />
           </div>
           <div className="form-group">

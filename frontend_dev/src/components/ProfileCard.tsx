@@ -9,31 +9,67 @@ interface ProfileCardProps {
   onEditClick: () => void
   onDragStart?: () => void
   onDragEnd?: () => void
+  onConnectClick?: () => void
+  connectionModeSourceId?: string | null
+  onConnectionTargetClick?: (id: string) => void
+  zoom?: number
+  panOffset?: { x: number; y: number }
 }
 
-function ProfileCard({ profile, onUpdate, onDelete, onEditClick, onDragStart, onDragEnd }: ProfileCardProps) {
+function ProfileCard({ 
+  profile, 
+  onUpdate, 
+  onDelete, 
+  onEditClick, 
+  onDragStart, 
+  onDragEnd,
+  onConnectClick,
+  connectionModeSourceId,
+  onConnectionTargetClick,
+  zoom = 1,
+  panOffset = { x: 0, y: 0 }
+}: ProfileCardProps) {
   const [isDragging, setIsDragging] = useState(false)
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 })
   const cardRef = useRef<HTMLDivElement>(null)
 
   const handlePointerDown = (e: React.PointerEvent) => {
-    // Don't drag if clicking on the button
     const target = e.target as HTMLElement
+    
+    // Handle connection mode target selection
+    if (connectionModeSourceId && connectionModeSourceId !== profile.id && onConnectionTargetClick) {
+      const isButton = target.closest('button')
+      if (!isButton) {
+        e.stopPropagation()
+        onConnectionTargetClick(profile.id)
+        return
+      }
+    }
+
+    // Don't drag if clicking on the button
     if (target.closest('button')) {
       return
     }
 
     if (cardRef.current) {
       e.stopPropagation() // Prevent canvas panning
-      const rect = cardRef.current.getBoundingClientRect()
-      setDragOffset({
-        x: e.clientX - rect.left,
-        y: e.clientY - rect.top,
-      })
-      setIsDragging(true)
-      onDragStart?.()
-      cardRef.current.setPointerCapture(e.pointerId)
-      e.preventDefault()
+      const boardCanvas = cardRef.current.closest('.board-canvas')
+      if (boardCanvas) {
+        const cardRect = cardRef.current.getBoundingClientRect()
+        const boardRect = boardCanvas.getBoundingClientRect()
+        // Calculate drag offset in canvas coordinates
+        // Mouse position in canvas coords - card position in canvas coords
+        const mouseCanvasX = (e.clientX - boardRect.left) / zoom - panOffset.x / zoom
+        const mouseCanvasY = (e.clientY - boardRect.top) / zoom - panOffset.y / zoom
+        setDragOffset({
+          x: mouseCanvasX - profile.x,
+          y: mouseCanvasY - profile.y,
+        })
+        setIsDragging(true)
+        onDragStart?.()
+        cardRef.current.setPointerCapture(e.pointerId)
+        e.preventDefault()
+      }
     }
   }
 
@@ -44,15 +80,19 @@ function ProfileCard({ profile, onUpdate, onDelete, onEditClick, onDragStart, on
         if (boardCanvas) {
           // Get canvas position accounting for transform
           const boardRect = boardCanvas.getBoundingClientRect()
-          // Calculate position relative to canvas (cards are positioned absolutely within canvas)
-          const newX = e.clientX - boardRect.left - dragOffset.x
-          const newY = e.clientY - boardRect.top - dragOffset.y
+          // Calculate position relative to canvas, accounting for zoom and pan
+          // Convert mouse viewport coordinates to canvas coordinates
+          // Canvas coordinate = (viewport coordinate - canvas viewport position) / zoom - panOffset / zoom
+          const newX = (e.clientX - boardRect.left) / zoom - panOffset.x / zoom - dragOffset.x
+          const newY = (e.clientY - boardRect.top) / zoom - panOffset.y / zoom - dragOffset.y
           
           // Constrain to reasonable bounds (relaxed for panning)
           const cardWidth = cardRef.current.offsetWidth
           const cardHeight = cardRef.current.offsetHeight
-          const constrainedX = Math.max(-2000, Math.min(newX, boardRect.width + 2000 - cardWidth))
-          const constrainedY = Math.max(-2000, Math.min(newY, boardRect.height + 2000 - cardHeight))
+          const canvasWidth = boardRect.width / zoom
+          const canvasHeight = boardRect.height / zoom
+          const constrainedX = Math.max(-2000, Math.min(newX, canvasWidth + 2000 - cardWidth))
+          const constrainedY = Math.max(-2000, Math.min(newY, canvasHeight + 2000 - cardHeight))
           
           onUpdate(profile.id, { x: constrainedX, y: constrainedY })
         }
@@ -80,13 +120,13 @@ function ProfileCard({ profile, onUpdate, onDelete, onEditClick, onDragStart, on
       document.removeEventListener('pointerup', handlePointerUp)
       document.body.style.userSelect = ''
     }
-  }, [isDragging, dragOffset, profile.id, onUpdate, onDragEnd])
+  }, [isDragging, dragOffset, profile.id, profile.x, profile.y, onUpdate, onDragEnd, zoom, panOffset])
 
   return (
     <>
       <div
         ref={cardRef}
-        className={`profile-card ${isDragging ? 'dragging' : ''}`}
+        className={`profile-card ${isDragging ? 'dragging' : ''} ${connectionModeSourceId === profile.id ? 'connection-source' : ''} ${connectionModeSourceId && connectionModeSourceId !== profile.id ? 'connection-target-candidate' : ''}`}
         style={{
           left: `${profile.x}px`,
           top: `${profile.y}px`,
@@ -115,12 +155,12 @@ function ProfileCard({ profile, onUpdate, onDelete, onEditClick, onDragStart, on
               {profile.birthDate && <span>{profile.birthDate}</span>}
             </p>
           )}
-          {profile.relationship && (
-            <p className="relationship">{profile.relationship}</p>
-          )}
         </div>
         <div className="profile-card-actions">
           <button type="button" onClick={onEditClick}>Edit Profile</button>
+          <button type="button" onClick={onConnectClick} className="connect-button">
+            Connect
+          </button>
         </div>
       </div>
     </>

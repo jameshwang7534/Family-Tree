@@ -1,0 +1,50 @@
+.connection-line-group {
+  pointer-events: stroke;
+}
+
+.connection-line {
+  stroke: #667eea;
+  stroke-width: 2;
+  fill: none;
+  transition: stroke-width 0.2s;
+  cursor: pointer;
+}
+
+.connection-line.hovered {
+  stroke-width: 3;
+  stroke: #764ba2;
+}
+
+.connection-label-container {
+  pointer-events: all;
+  overflow: visible;
+}
+
+.connection-label {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  background: white;
+  border: 1px solid #667eea;
+  border-radius: 4px;
+  cursor: pointer;
+  user-select: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s;
+  white-space: nowrap;
+  min-width: fit-content;
+  width: auto;
+}
+
+.connection-label:hover {
+  background: #f0f0ff;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+
+.connection-label-text {
+  font-size: 0.85rem;
+  color: #333;
+  font-weight: 500;
+}
