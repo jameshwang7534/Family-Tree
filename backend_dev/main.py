@@ -1,3 +1,4 @@
+from pathlib import Path
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
@@ -7,8 +8,9 @@ from dotenv import load_dotenv
 from routes.auth import router as auth_router
 from routes.trees import router as trees_router
 
-# Load environment variables
-load_dotenv()
+# Load .env from backend_dev folder so it works no matter where you run the server from
+_env_path = Path(__file__).resolve().parent / ".env"
+load_dotenv(_env_path)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):

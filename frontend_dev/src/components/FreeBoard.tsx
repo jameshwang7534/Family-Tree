@@ -443,12 +443,22 @@ function FreeBoard() {
             const fromProfile = profiles.find(p => p.id === connection.fromCardId)
             const toProfile = profiles.find(p => p.id === connection.toCardId)
             if (!fromProfile || !toProfile) return null
+            const fromSameSource = connections.filter(c => c.fromCardId === connection.fromCardId)
+            const connectionIndex = fromSameSource.findIndex(c => c.id === connection.id)
+            const connectionCountFromSource = fromSameSource.length
+            const toSameTarget = connections.filter(c => c.toCardId === connection.toCardId)
+            const connectionIndexToTarget = toSameTarget.findIndex(c => c.id === connection.id)
+            const connectionCountToTarget = toSameTarget.length
             return (
               <ConnectionLine
                 key={connection.id}
                 connection={connection}
                 fromProfile={fromProfile}
                 toProfile={toProfile}
+                connectionIndex={connectionIndex}
+                connectionCountFromSource={connectionCountFromSource}
+                connectionIndexToTarget={connectionIndexToTarget}
+                connectionCountToTarget={connectionCountToTarget}
                 onEdit={handleEditConnection}
               />
             )

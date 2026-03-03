@@ -7,27 +7,55 @@ interface ConnectionLineProps {
   connection: Connection
   fromProfile: Profile
   toProfile: Profile
+  /** Index of this connection among all from the same source (0-based). */
+  connectionIndex?: number
+  /** Total number of connections from the same source card. */
+  connectionCountFromSource?: number
+  /** Index of this connection among all to the same target (0-based). */
+  connectionIndexToTarget?: number
+  /** Total number of connections to the same target card. */
+  connectionCountToTarget?: number
   onEdit?: (connectionId: string) => void
 }
 
-function ConnectionLine({ connection, fromProfile, toProfile, onEdit }: ConnectionLineProps) {
+const ROW_HEIGHT = 36 // Vertical space per connection row (fits label + padding)
+const BASE_OFFSET = 24   // Clear space above cards before first horizontal segment
+
+function ConnectionLine({
+  connection,
+  fromProfile,
+  toProfile,
+  connectionIndex = 0,
+  connectionCountFromSource = 1,
+  connectionIndexToTarget = 0,
+  connectionCountToTarget = 1,
+  onEdit,
+}: ConnectionLineProps) {
   const [isHovered, setIsHovered] = useState(false)
 
-  // Card dimensions
+  // Card dimensions (match ProfileCard.css: width 200px, anchor at top-left)
   const CARD_WIDTH = 200
-  const CARD_MIN_HEIGHT = 150
-  
-  // Calculate bottom center points of cards
-  const fromX = fromProfile.x + CARD_WIDTH / 2
-  const fromY = fromProfile.y + CARD_MIN_HEIGHT
-  const toX = toProfile.x + CARD_WIDTH / 2
-  const toY = toProfile.y + CARD_MIN_HEIGHT
 
-  // Manhattan routing: vertical down -> horizontal -> vertical to target
-  const VERTICAL_OFFSET = 20 // Distance to drop down before going horizontal
-  const midY = Math.max(fromY, toY) + VERTICAL_OFFSET
-  
-  // Create path for Manhattan routing
+  // Stagger attachment when multiple lines leave the same card: slight horizontal fan-out
+  const fanOutFrom = connectionCountFromSource > 1
+    ? (connectionIndex - (connectionCountFromSource - 1) / 2) * 12
+    : 0
+
+  // Stagger attachment when multiple lines arrive at the same card: arrows land at separate points
+  const fanOutTo = connectionCountToTarget > 1
+    ? (connectionIndexToTarget - (connectionCountToTarget - 1) / 2) * 14
+    : 0
+
+  const fromX = fromProfile.x + CARD_WIDTH / 2 + fanOutFrom
+  const fromY = fromProfile.y
+  const toX = toProfile.x + CARD_WIDTH / 2 + fanOutTo
+  const toY = toProfile.y
+
+  // Manhattan routing: vertical up from each card, then horizontal above both.
+  // Stagger midY per connection so lines and labels don't overlap.
+  const midY = Math.min(fromY, toY) - BASE_OFFSET - connectionIndex * ROW_HEIGHT
+
+  // Path: from top-center of card A → up → across → down → top-center of card B
   const pathData = `M ${fromX} ${fromY} L ${fromX} ${midY} L ${toX} ${midY} L ${toX} ${toY}`
 
   // Calculate label position (middle of horizontal segment)
