@@ -7,6 +7,7 @@ import { TreeTabsBar, TREE_TABS_BAR_HEIGHT } from './TreeTabsBar'
 import { AddTreeModal } from './AddTreeModal'
 import { useTree } from '../context/TreeContext'
 import { treeService } from '../services/treeService'
+import { profileAssetsService } from '../services/profileAssetsService'
 import type { Profile, Connection } from '../types'
 import '../styles/FreeBoard.css'
 
@@ -180,7 +181,15 @@ function FreeBoard() {
     }
   }
 
-  const handleDeleteProfile = (id: string) => {
+  const handleDeleteProfile = async (id: string) => {
+    if (selectedTreeId) {
+      try {
+        await profileAssetsService.deleteProfileAssets(selectedTreeId, id)
+      } catch {
+        // Best-effort: still remove profile locally if backend fails (e.g. offline)
+      }
+    }
+    if (editingProfileId === id) setEditingProfileId(null)
     setProfiles(profiles.filter(profile => profile.id !== id))
     // Also delete all connections involving this profile
     setConnections(connections.filter(
@@ -509,6 +518,7 @@ function FreeBoard() {
       {editingProfile && (
         <EditProfileModal
           profile={editingProfile}
+          treeId={selectedTreeId}
           onSave={handleSaveEdit}
           onClose={() => setEditingProfileId(null)}
           onDelete={(id) => {

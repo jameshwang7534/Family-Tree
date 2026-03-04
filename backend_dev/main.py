@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 
 from routes.auth import router as auth_router
 from routes.trees import router as trees_router
+from routes.profile_assets import router as profile_assets_router
 
 # Load .env from backend_dev folder so it works no matter where you run the server from
 _env_path = Path(__file__).resolve().parent / ".env"
@@ -37,8 +38,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Include routers
+# Include routers (profile-assets on separate path to avoid conflict with /api/trees/{id})
 app.include_router(auth_router, prefix="/api/auth")
+app.include_router(profile_assets_router, prefix="/api/profile-assets")
 app.include_router(trees_router, prefix="/api/trees")
 
 @app.get("/health")

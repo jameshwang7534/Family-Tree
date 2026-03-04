@@ -29,3 +29,33 @@ export interface Connection {
   toCardId: string
   relationshipText: string
 }
+
+export interface ProfileMediaItem {
+  id: string
+  treeId: string
+  profileId: string
+  fileUrl: string
+  fileType: 'image' | 'video'
+  caption: string | null
+  createdAt: string
+}
+
+export interface ProfileVoiceItem {
+  id: string
+  treeId: string
+  profileId: string
+  fileUrl: string
+  durationSeconds: number | null
+  createdAt: string
+}
+
+export interface ProfileStoryItem {
+  id: string
+  treeId: string
+  profileId: string
+  title: string
+  dateCreated: string
+  mainText: string
+  createdAt: string
+  updatedAt: string
+}
